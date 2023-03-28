@@ -40,4 +40,5 @@ jobs:
         run: |
           openvpn  --version
           sudo chmod 777 vpn.log
+          cat vpn.log
           sudo killall openvpn 
