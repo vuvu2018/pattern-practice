@@ -1,8 +1,16 @@
-Name: Starter Workflow Demo
+# This is a basic workflow to help you get started with Actions
 
+name: CI
+
+# Controls when the workflow will run
 on:
+  # Triggers the workflow on push or pull request events but only for the "main" branch
   push:
-    branches: main
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+  workflow_dispatch:
 
 jobs:
   build:
@@ -10,19 +18,60 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-      - name: Install Open VPN
-        run: sudo apt-get install openvpn
-      - name: Connect VPN
-        uses: golfzaptw/action-connect-ovpn@master
-        id: connect_vpn
-        with:
-          PING_URL: '127.0.0.1'
-          FILE_OVPN: '.github/vpn/config.ovpn'
+
+#      - name: Install Open VPN
+#        run: sudo apt-get install openvpn
+
+      - name: Setup VPN config
         env:
+          CA_CRT: ${{ secrets.CA_CRT }}
           USER_CRT: ${{ secrets.USER_CRT }}
           USER_KEY: ${{ secrets.USER_KEY }}
-      - name: Check Connect VPN
-        run: echo ${{ steps.connect_vpn.outputs.STATUS }}
-      - name: kill vpn
-        if: always()
-        run: sudo killall openvpn
+        if: "${{ env.USER_CRT != '' }}"
+        run: echo "::set-output name=defined::true"
+#        run: |
+#          echo ${CA_CRT}
+#          echo ${USER_CRT}
+#          echo ${USER_KEY}
+#          echo -e "${{ vars.CA_CRT }}" > ca.crt
+#          echo -e "${{ vars.USER_CRT }}" > user.crt
+#          echo -e "${{ vars.USER_KEY }}" > user.key
+#          sudo chmod 700 ca.crt
+#          sudo chmod 700 user.crt
+#          sudo chmod 700 user.key
+#          cat ca.crt
+#          echo "=================="
+#          cat user.crt
+#          echo "=================="
+#          cat user.key
+
+      - name: Configure SSH
+        run: |
+          mkdir -p ~/.ssh/
+          cat .github/vpn/demo.pem >> ~/.ssh/staging.key
+          chmod 600 ~/.ssh/staging.key
+          cat >>~/.ssh/config <<END
+          Host staging
+            HostName 10.0.133.252
+            User ubuntu
+            IdentityFile ~/.ssh/staging.key
+            StrictHostKeyChecking no
+          END
+#
+#      - name: Connect VPN
+#        run: |
+#          sudo openvpn --config ".github/vpn/config_2.ovpn" --log "vpn.log" --daemon
+#
+#      - name: Wait for a VPN connection
+#        timeout-minutes: 2
+#        run: |
+#          sleep 60s
+#          ssh staging "ls -la && mkdir test_2"
+#
+#
+#      - name: Kill VPN connection
+#        if: always()
+#        run: |
+#          sudo chmod 777 vpn.log
+#          cat vpn.log
+#          sudo killall openvpn

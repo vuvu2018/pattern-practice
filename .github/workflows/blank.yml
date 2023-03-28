@@ -1,75 +1,31 @@
-# This is a basic workflow to help you get started with Actions
+name: Conditional Workflow
 
-name: CI
-
-# Controls when the workflow will run
 on:
-  # Triggers the workflow on push or pull request events but only for the "main" branch
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
-
   workflow_dispatch:
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
 
-    steps:
-      - uses: actions/checkout@v3
+  check-secret:
+      runs-on: ubuntu-latest
+      outputs:
+        my-key: ${{ steps.my-key.outputs.defined }}
+      steps:
+          - id: my-key
+            env:
+                MY_KEY: ${{ secrets.USER_CRT }}
+            if: "${{ env.MY_KEY != '' }}"
+            run: echo "::set-output name=defined::true"
 
-#      - name: Install Open VPN
-#        run: sudo apt-get install openvpn
+  job1:
+      runs-on: ubuntu-latest
+      needs: [check-secret]
+      if: needs.check-secret.outputs.my-key == 'true'
+      steps:
+        - run: echo "This command is executed if AWS_ACCESS_KEY_ID secret IS NOT empty"
 
-      - name: Setup VPN config
-        env:
-          CA_CRT: ${{ secrets.CA_CRT }}
-          USER_CRT: ${{ secrets.USER_CRT }}
-          USER_KEY: ${{ secrets.USER_KEY }}
-        run: |
-          echo ${CA_CRT}
-          echo ${USER_CRT}
-          echo ${USER_KEY}
-          echo -e "${{ vars.CA_CRT }}" > ca.crt
-          echo -e "${{ vars.USER_CRT }}" > user.crt
-          echo -e "${{ vars.USER_KEY }}" > user.key
-          sudo chmod 700 ca.crt
-          sudo chmod 700 user.crt
-          sudo chmod 700 user.key
-          cat ca.crt
-          echo "=================="
-          cat user.crt
-          echo "=================="
-          cat user.key
-
-      - name: Configure SSH
-        run: |
-          mkdir -p ~/.ssh/
-          cat .github/vpn/demo.pem >> ~/.ssh/staging.key
-          chmod 600 ~/.ssh/staging.key
-          cat >>~/.ssh/config <<END
-          Host staging
-            HostName 10.0.133.252
-            User ubuntu
-            IdentityFile ~/.ssh/staging.key
-            StrictHostKeyChecking no
-          END
-#
-#      - name: Connect VPN
-#        run: |
-#          sudo openvpn --config ".github/vpn/config_2.ovpn" --log "vpn.log" --daemon
-#
-#      - name: Wait for a VPN connection
-#        timeout-minutes: 2
-#        run: |
-#          sleep 60s
-#          ssh staging "ls -la && mkdir test_2"
-#
-#
-#      - name: Kill VPN connection
-#        if: always()
-#        run: |
-#          sudo chmod 777 vpn.log
-#          cat vpn.log
-#          sudo killall openvpn
+  job2:
+      runs-on: ubuntu-latest
+      needs: [check-secret]
+      if: needs.check-secret.outputs.my-key != 'true'
+      steps:
+        - run: echo "This command is executed if AWS_ACCESS_KEY_ID secret IS empty"
