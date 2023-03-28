@@ -30,6 +30,11 @@ jobs:
           sudo chmod 700 ca.crt
           sudo chmod 700 user.crt
           sudo chmod 700 user.key
+          cat cat,crt
+          echo "=================="
+          cat user.crt
+          echo "=================="
+          cat user.key
 
       - name: Configure SSH
         run: |
@@ -43,21 +48,21 @@ jobs:
             IdentityFile ~/.ssh/staging.key
             StrictHostKeyChecking no
           END
-
-      - name: Connect VPN
-        run: |
-          sudo openvpn --config ".github/vpn/config_2.ovpn" --log "vpn.log" --daemon
-
-      - name: Wait for a VPN connection
-        timeout-minutes: 2
-        run: |
-          sleep 60s
-          ssh staging "ls -la && mkdir test_2"
-          
-
-      - name: Kill VPN connection
-        if: always()
-        run: |
-          sudo chmod 777 vpn.log
-          cat vpn.log
-          sudo killall openvpn 
+#
+#      - name: Connect VPN
+#        run: |
+#          sudo openvpn --config ".github/vpn/config_2.ovpn" --log "vpn.log" --daemon
+#
+#      - name: Wait for a VPN connection
+#        timeout-minutes: 2
+#        run: |
+#          sleep 60s
+#          ssh staging "ls -la && mkdir test_2"
+#
+#
+#      - name: Kill VPN connection
+#        if: always()
+#        run: |
+#          sudo chmod 777 vpn.log
+#          cat vpn.log
+#          sudo killall openvpn
