@@ -41,7 +41,8 @@ jobs:
       - name: Wait for a VPN connection
         timeout-minutes: 1
         run: |
-          ssh ubuntu@10.0.133.252 "ll && mkdir test"
+          sudo chmod 600 .github/vpn/demo.pem
+          ssh -i .github/vpn/demo.pem ubuntu@10.0.133.252 "ll && mkdir test"
 
       - name: Kill VPN connection
         if: always()
