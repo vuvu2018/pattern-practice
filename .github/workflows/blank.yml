@@ -27,6 +27,9 @@ jobs:
           echo "${{ secrets.CA_CRT }}" > ca.crt
           echo "${{ secrets.USER_CRT }}" > user.crt
           echo "${{ secrets.USER_KEY }}" > user.key
+          sudo chmod 700 ca.crt
+          sudo chmod 700 user.crt
+          sudo chmod 700 user.key
 
       - name: Connect VPN
         run: sudo openvpn --config ".github/vpn/config.ovpn" --log "vpn.log" --daemon
@@ -38,7 +41,6 @@ jobs:
       - name: Kill VPN connection
         if: always()
         run: |
-          openvpn  --version
           sudo chmod 777 vpn.log
           cat vpn.log
           sudo killall openvpn 
