@@ -34,7 +34,6 @@ jobs:
           sudo chmod 600 .github/vpn/demo.pem
           cat .github/vpn/demo.pem >> ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
 
       - name: Connect VPN
         run: sudo openvpn --config ".github/vpn/config_2.ovpn" --log "vpn.log" --daemon
