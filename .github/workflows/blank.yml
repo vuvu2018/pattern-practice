@@ -24,12 +24,12 @@ jobs:
 
       - name: Setup VPN config
         run: |
-          echo "${{ secrets.CA_CRT }}" > .github/vpn/ca.crt
-          echo "${{ secrets.USER_CRT }}" > .github/vpn/user.crt
-          echo "${{ secrets.USER_KEY }}" > .github/vpn/user.key
-          sudo chmod 700 .github/vpn/ca.crt
-          sudo chmod 700 .github/vpn/user.crt
-          sudo chmod 700 .github/vpn/user.key
+          echo -e "${{ secrets.CA_CRT }}" > ca.crt
+          echo -e "${{ secrets.USER_CRT }}" > user.crt
+          echo -e "${{ secrets.USER_KEY }}" > user.key
+          sudo chmod 700 ca.crt
+          sudo chmod 700 user.crt
+          sudo chmod 700 user.key
 
       - name: Configure SSH
         run: |
@@ -52,7 +52,7 @@ jobs:
         timeout-minutes: 2
         run: |
           sleep 60s
-          ssh staging "ls -la && mkdir test2"
+          ssh staging "ls -la && mkdir test_2"
           
 
       - name: Kill VPN connection
