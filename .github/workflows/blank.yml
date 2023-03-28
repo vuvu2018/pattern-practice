@@ -24,9 +24,9 @@ jobs:
 
       - name: Setup VPN config
         run: |
-          echo "${{ secrets.CA_CRT }}" > ca.crt
-          echo "${{ secrets.USER_CRT }}" > user.crt
-          echo "${{ secrets.USER_KEY }}" > user.key
+          echo "${{ secrets.CA_CRT }}" > .github/vpn/ca.crt
+          echo "${{ secrets.USER_CRT }}" > .github/vpn/user.crt
+          echo "${{ secrets.USER_KEY }}" > .github/vpn/user.key
           sudo chmod 700 ca.crt
           sudo chmod 700 user.crt
           sudo chmod 700 user.key
@@ -46,13 +46,13 @@ jobs:
 
       - name: Connect VPN
         run: |
-          sudo openvpn --config ".github/vpn/config.ovpn" --log "vpn.log" --daemon
+          sudo openvpn --config ".github/vpn/config_2.ovpn" --log "vpn.log" --daemon
 
       - name: Wait for a VPN connection
         timeout-minutes: 2
         run: |
           sleep 60s
-          ssh staging "ls -la && mkdir test"
+          ssh staging "ls -la && mkdir test2"
           
 
       - name: Kill VPN connection
