@@ -22,8 +22,7 @@ jobs:
       - name: Install Open VPN
         run: sudo apt-get install openvpn
 
-      - name: Connect VPN
-        id: connect_vpn
+      - name: Setup VPN config
         run: |
           echo "${{ secrets.CA_CRT }}" > ca.crt
           echo "${{ secrets.USER_CRT }}" > user.crt
@@ -39,5 +38,6 @@ jobs:
       - name: Kill VPN connection
         if: always()
         run: |
+          openvpn  --version
           sudo chmod 777 vpn.log
           sudo killall openvpn 
