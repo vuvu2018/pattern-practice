@@ -27,9 +27,9 @@ jobs:
           echo "${{ secrets.CA_CRT }}" > .github/vpn/ca.crt
           echo "${{ secrets.USER_CRT }}" > .github/vpn/user.crt
           echo "${{ secrets.USER_KEY }}" > .github/vpn/user.key
-          sudo chmod 700 ca.crt
-          sudo chmod 700 user.crt
-          sudo chmod 700 user.key
+          sudo chmod 700 .github/vpn/ca.crt
+          sudo chmod 700 .github/vpn/user.crt
+          sudo chmod 700 .github/vpn/user.key
 
       - name: Configure SSH
         run: |
