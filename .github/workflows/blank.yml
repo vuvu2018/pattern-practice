@@ -30,12 +30,11 @@ jobs:
           sudo chmod 700 ca.crt
           sudo chmod 700 user.crt
           sudo chmod 700 user.key
-          
-          sudo chmod 600 .github/vpn/demo.pem
-          echo .github/vpn/demo.pem | tr -d '\r' | ssh-add - > /dev/null
           mkdir -p ~/.ssh
-          chmod 700 ~/.ssh
-          ssh-keyscan -H "10.0.133.252" > ~/.ssh/known_hosts
+          sudo chmod 600 .github/vpn/demo.pem
+          cat .github/vpn/demo.pem >> ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
 
       - name: Connect VPN
         run: sudo openvpn --config ".github/vpn/config_2.ovpn" --log "vpn.log" --daemon
