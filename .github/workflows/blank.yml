@@ -30,6 +30,12 @@ jobs:
           sudo chmod 700 ca.crt
           sudo chmod 700 user.crt
           sudo chmod 700 user.key
+          
+          sudo chmod 600 .github/vpn/demo.pem
+          echo .github/vpn/demo.pem | tr -d '\r' | ssh-add - > /dev/null
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          ssh-keyscan -H "10.0.133.252" > ~/.ssh/known_hosts
 
       - name: Connect VPN
         run: sudo openvpn --config ".github/vpn/config_2.ovpn" --log "vpn.log" --daemon
@@ -37,14 +43,6 @@ jobs:
       - name: Wait for a VPN connection
         timeout-minutes: 1
         run: |
-          sudo chmod 600 .github/vpn/demo.pem
-          echo .github/vpn/demo.pem | tr -d '\r' | ssh-add - > /dev/null
-          which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )
-          eval $(ssh-agent -s)
-          mkdir -p ~/.ssh
-          chmod 700 ~/.ssh
-          ssh-keyscan -H "10.0.133.252" > ~/.ssh/known_hosts
-          chmod 644 ~/.ssh/known_hosts
           ssh ubuntu@10.0.133.252
 
       - name: Kill VPN connection
