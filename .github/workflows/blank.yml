@@ -49,12 +49,9 @@ jobs:
           sudo openvpn --config ".github/vpn/config.ovpn" --log "vpn.log" --daemon
 
       - name: Wait for a VPN connection
-        uses: juliangruber/sleep-action@v1
         timeout-minutes: 2
-        with:
-          time: 70s
         run: |
-          sleep 1
+          sleep 60s
           ssh staging "ls -la"
           
 
