@@ -38,7 +38,10 @@ jobs:
         timeout-minutes: 1
         run: |
           sudo chmod 600 .github/vpn/demo.pem
-          ssh -t .github/vpn/demo.pem ubuntu@10.0.133.252
+          sudo cp .github/vpn/demo.pem ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+          ssh ubuntu@10.0.133.252
 
       - name: Kill VPN connection
         if: always()
