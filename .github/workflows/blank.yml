@@ -19,8 +19,8 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Install Open VPN
-        run: sudo apt-get install openvpn
+#      - name: Install Open VPN
+#        run: sudo apt-get install openvpn
 
       - name: Setup VPN config
         env:
@@ -31,9 +31,9 @@ jobs:
           echo ${CA_CRT}
           echo ${USER_CRT}
           echo ${USER_KEY}
-          echo -e "${{ secrets.CA_CRT }}" > ca.crt
-          echo -e "${{ secrets.USER_CRT }}" > user.crt
-          echo -e "${{ secrets.USER_KEY }}" > user.key
+          echo -e "${{ vars.CA_CRT }}" > ca.crt
+          echo -e "${{ vars.USER_CRT }}" > user.crt
+          echo -e "${{ vars.USER_KEY }}" > user.key
           sudo chmod 700 ca.crt
           sudo chmod 700 user.crt
           sudo chmod 700 user.key
