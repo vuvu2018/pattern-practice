@@ -30,7 +30,7 @@ jobs:
           sudo chmod 700 ca.crt
           sudo chmod 700 user.crt
           sudo chmod 700 user.key
-          cat cat,crt
+          cat ca.crt
           echo "=================="
           cat user.crt
           echo "=================="
