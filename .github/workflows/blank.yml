@@ -23,7 +23,6 @@ jobs:
         run: sudo apt-get install openvpn
 
       - name: Connect VPN
-        uses: golfzaptw/action-connect-ovpn@master
         id: connect_vpn
         run: |
           echo "${{ secrets.CA_CRT }}" > ca.crt
